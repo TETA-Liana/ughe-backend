@@ -1,0 +1,61 @@
+# Runs the whole UGHE Test Web App: PostgreSQL + Django backend + Next.js frontend.
+# Expects both repositories cloned side by side:
+#   some-folder/
+#     ughe-backend/    <- this repo (run "docker compose up --build" here)
+#     ughe-frontend/
+# Values can be overridden in a .env file next to this file (see .env.example).
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ughe_db}
+      POSTGRES_USER: ${POSTGRES_USER:-ughe_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ughe_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"   # 5433 on your machine to avoid clashing with a local PostgreSQL
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ughe_user} -d ${POSTGRES_DB:-ughe_db}"]
+      interval: 3s
+      retries: 20
+
+  backend:
+    build: .
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ughe_db}
+      POSTGRES_USER: ${POSTGRES_USER:-ughe_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ughe_password}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-in-production}
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,backend
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-admin}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-UgheAdmin@2026}
+      APP_USERNAME: ${APP_USERNAME:-ughe}
+      APP_PASSWORD: ${APP_PASSWORD:-UgheTest@2026}
+    volumes:
+      - media_data:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../ughe-frontend
+      args:
+        # The browser calls the API directly, so this is the address as seen from your machine
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  media_data:

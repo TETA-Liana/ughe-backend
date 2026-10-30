@@ -1,0 +1,6 @@
+# Python libraries used by the UGHE Test Web App backend
+Django==5.2.18                 # web framework + Django Admin (content management)
+djangorestframework==3.18.3    # REST API + token authentication
+django-cors-headers==4.9.0     # lets the Next.js frontend (port 3000) call the API (port 8000)
+psycopg2-binary==2.9.13        # PostgreSQL driver
+pillow==12.1.1                 # required by Django ImageField (logo upload)
