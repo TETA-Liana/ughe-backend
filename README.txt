@@ -5,9 +5,8 @@
 
 GITHUB REPOSITORIES (public)
 ----------------------------
-Backend  (Django)  : https://github.com/<your-username>/ughe-backend
-Frontend (Next.js) : https://github.com/<your-username>/ughe-frontend
-(Replace <your-username> with your GitHub username after pushing - see section 8.)
+Backend  (Django)  :https://github.com/TETA-Liana/ughe-backend.git
+Frontend (Next.js) : https://github.com/TETA-Liana/ughe-frontend.git
 
 
 1. WHAT THE APP DOES
@@ -171,29 +170,6 @@ GET  /api/auth/me/       header Authorization: Token <token>
 GET  /api/homepage/      header Authorization: Token <token>
                          -> settings, top_buttons, nav_items, slides, stats
 Requests without a valid token get 401.
-
-
-10. PUSHING TO GITHUB (two public repositories)
------------------------------------------------
-On GitHub create two PUBLIC empty repositories: ughe-backend and ughe-frontend.
-
-    cd ughe-backend
-    git init
-    git add .
-    git commit -m "UGHE Test Web App - Django backend"
-    git branch -M main
-    git remote add origin https://github.com/<your-username>/ughe-backend.git
-    git push -u origin main
-
-    cd ../ughe-frontend
-    git init
-    git add .
-    git commit -m "UGHE Test Web App - Next.js frontend"
-    git branch -M main
-    git remote add origin https://github.com/<your-username>/ughe-frontend.git
-    git push -u origin main
-
-Then put the two links at the top of this README.txt (in both repos) and push.
 
 
 11. DEPLOYMENT NOTES
